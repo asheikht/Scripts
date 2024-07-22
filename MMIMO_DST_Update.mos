@@ -1,0 +1,17 @@
+lt all
+confb+
+gs+
+
+setm MMimoSleepTimeGroup=1,MMimoSleepTimeWindow=3 startTime 20:01 stopTime 23:59
+
+setm MMimoSleepTimeGroup=1,MMimoSleepTimeWindow=1 startTime 14:00 stopTime 20:00
+
+setm MMimoSleepTimeGroup=1,MMimoSleepTimeWindow=2 startTime 00:00 stopTime 13:59
+
+
+
+setm MMimoSleepTimeGroup=1,MMimoSleepTimeWindow=3 startTime 20:01 stopTime 23:59
+
+setm MMimoSleepTimeGroup=1,MMimoSleepTimeWindow=1 startTime 14:00 stopTime 20:00
+
+setm MMimoSleepTimeGroup=1,MMimoSleepTimeWindow=2 startTime 00:00 stopTime 13:59

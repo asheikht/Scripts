@@ -1,0 +1,49 @@
+#Massive MIMO Sleep Mode Script - To enable Feature
+
+lt all
+
+confb+
+gs+
+
+#Use below commands when actually activating the feature for Energy Savings 
+
+mr FRUloop
+ma FRUloop Equipment=1,fieldreplaceableunit
+
+$AIR_count = 0
+
+func FRUCheck
+if $temp1[productName] ~ AIR
+        $AIR_count = $AIR_count + 1
+fi
+endfunc
+
+
+func FeatureAct
+pr GNBDUFunction=
+if $nr_of_mos > 0
+
+		set FeatureState=CXC4012378 featureState 1
+		set NRSectorCarrier massiveMimoSleepEnabled 1
+		
+		#Night Time Window from 12AM to 6AM. Below values are in UTC 
+		
+		set MMimoSleepTimeGroup=1,MMimoSleepTimeWindow=1 startTime 13:00
+		set MMimoSleepTimeGroup=1,MMimoSleepTimeWindow=1 stopTime 19:00
+
+fi
+endfunc
+
+
+for $mo1 in FRUloop
+        get $mo1 productdata > $temp1
+        FRUCheck
+done
+
+if $AIR_count > 0
+        FeatureAct
+fi
+
+
+
+gs-

@@ -1,0 +1,83 @@
+#Massive MIMO Sleep Mode Script
+
+lt all
+
+confb+
+gs+
+
+mr FRUloop
+ma FRUloop Equipment=1,fieldreplaceableunit
+
+$AIR_count = 0
+
+func FRUCheck
+if $temp1[productName] ~ AIR
+        $AIR_count = $AIR_count + 1
+fi
+endfunc
+
+
+func FeatureAct
+pr GNBDUFunction=
+if $nr_of_mos > 0
+		
+		mr unlocked_Sectors
+        ma unlocked_Sectors ^NRSectorCarrier=|^NRCellDU= administrativeState 1
+        set unlocked_Sectors administrativeState 0
+        wait 5
+        
+		
+		crn GNBDUFunction=1,MassiveMimoSleep=1,MMimoSleepTimeGroup=1
+		end
+		
+		crn GNBDUFunction=1,MassiveMimoSleep=1,MMimoSleepProfile=1
+		sleepMode 0
+		switchDownMonitorDurTimer 60
+		switchDownMonitorDurTimerEco 300
+		switchDownPrbThreshDl 20
+		switchDownPrbThreshDlEco 15
+		switchDownPrbThreshUlEco 10
+		switchDownRrcConnThresh 30
+		switchDownRrcConnThreshEco 30
+		switchUpMonitorDurTimer 30
+		switchUpMonitorDurTimerEco 120
+		switchUpPrbThreshDl 30
+		switchUpPrbThreshDlEco 30
+		switchUpPrbThreshUlEco 15
+		switchUpRrcConnThresh 50
+		switchUpRrcConnThreshEco 50
+		end
+		
+		crn GNBDUFunction=1,MassiveMimoSleep=1,MMimoSleepTimeGroup=1,MMimoSleepTimeWindow=1
+		dayOfWeek 0
+		mMimoSleepProfileRef MassiveMimoSleep=1,MMimoSleepProfile=1
+		startTime 00:00
+		stopTime 23:59
+		end
+		
+		set  NRSectorCarrier mMimoSleepTimeGroupRef MassiveMimoSleep=1,MMimoSleepTimeGroup=1
+		
+		#Emable DETECTION Mode
+		set NRSectorCarrier massiveMimoSleepEnabled 2
+		
+		set unlocked_Sectors administrativeState 1
+fi
+endfunc
+
+
+for $mo1 in FRUloop
+        get $mo1 productdata > $temp1
+        FRUCheck
+done
+
+if $AIR_count > 0
+        FeatureAct
+fi
+
+#Use below commands when actually activating the feature for Energy Savings
+
+#set FeatureState=CXC4012378 featureState 1
+#set NRSectorCarrier massiveMimoSleepEnabled 1
+#set start and stop time for MMimoSleepTimeWindow as desired
+
+gs-
